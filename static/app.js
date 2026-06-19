@@ -13,6 +13,7 @@ let appState = {
 const refreshBtn = document.getElementById('refresh-btn');
 const refreshIcon = document.getElementById('refresh-icon');
 const exportBtn = document.getElementById('export-btn');
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
 const searchInput = document.getElementById('search-input');
 const updatesContainer = document.getElementById('updates-container');
 const lastSyncTimeEl = document.getElementById('last-sync-time');
@@ -46,6 +47,11 @@ if (progressCircle) {
 
 // App Initialization
 document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+    }
+    
     fetchReleaseNotes();
     setupEventListeners();
 });
@@ -56,6 +62,9 @@ function setupEventListeners() {
     retryBtn.addEventListener('click', () => fetchReleaseNotes(true));
     if (exportBtn) {
         exportBtn.addEventListener('click', handleExportCSV);
+    }
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', toggleTheme);
     }
     
     // Search implementation with basic debounce
@@ -563,4 +572,10 @@ function handleExportCSV() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+// Toggle color theme (Light / Dark) and persist preference
+function toggleTheme() {
+    const isLight = document.body.classList.toggle('light-theme');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
 }

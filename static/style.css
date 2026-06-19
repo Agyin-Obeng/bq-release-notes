@@ -1024,3 +1024,192 @@ body.composer-open .app-main {
         width: 100%;
     }
 }
+
+/* Theme Toggle Button & Icon Styling */
+.theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.theme-icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* Toggle icon states based on active theme class */
+body.light-theme .sun-icon {
+    display: none;
+}
+
+body:not(.light-theme) .moon-icon {
+    display: none;
+}
+
+/* Light Theme Variable Overrides */
+body.light-theme {
+    --bg-primary: #f8fafc;
+    --bg-secondary: rgba(241, 245, 249, 0.85);
+    --bg-card: rgba(255, 255, 255, 0.8);
+    --bg-card-hover: rgba(255, 255, 255, 0.95);
+    --border-color: rgba(0, 0, 0, 0.06);
+    --border-color-focus: rgba(59, 130, 246, 0.5);
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+}
+
+/* Light Theme Specific Components Override */
+body.light-theme {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+body.light-theme .glow-1 {
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.08), transparent 70%);
+}
+
+body.light-theme .glow-2 {
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.08), transparent 70%);
+}
+
+body.light-theme .logo-text {
+    background: linear-gradient(135deg, #0f172a 50%, var(--text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .main-title {
+    background: linear-gradient(to right, #0f172a, var(--text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .stat-value {
+    color: #0f172a;
+}
+
+body.light-theme .filter-pill:hover {
+    background: rgba(0, 0, 0, 0.03);
+    color: #0f172a;
+}
+
+body.light-theme .filter-pill.active {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.15);
+    color: var(--accent-blue);
+}
+
+body.light-theme #search-input {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: #0f172a;
+}
+
+body.light-theme #search-input::placeholder {
+    color: var(--text-muted);
+}
+
+body.light-theme .timeline-date-header {
+    color: #0f172a;
+}
+
+body.light-theme .update-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .update-card.selected {
+    background: rgba(59, 130, 246, 0.03);
+}
+
+body.light-theme .checkmark {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+body.light-theme .checkbox-container:hover input ~ .checkmark {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+body.light-theme .card-content code {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.06);
+    color: #0f172a;
+}
+
+body.light-theme .card-tweet-btn:hover, body.light-theme .card-copy-btn:hover {
+    color: #0f172a;
+}
+
+/* Light Theme Tweet Composer Adjustments */
+body.light-theme .tweet-composer-panel {
+    background-color: rgba(248, 250, 252, 0.95);
+    border-left: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: -10px 0 35px rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .composer-title,
+body.light-theme .display-name {
+    color: #0f172a;
+}
+
+body.light-theme .x-logo {
+    color: #0f172a;
+}
+
+body.light-theme .composer-close-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: #0f172a;
+}
+
+body.light-theme #composer-textarea {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: #0f172a;
+}
+
+body.light-theme .user-avatar-mock .avatar-letter {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+body.light-theme .btn-x {
+    background-color: #0f172a;
+    color: #ffffff;
+}
+
+body.light-theme .btn-x:hover {
+    background-color: #1e293b;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+body.light-theme .theme-toggle-btn {
+    background: rgba(0, 0, 0, 0.03);
+    color: var(--text-secondary);
+}
+
+body.light-theme .theme-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: #0f172a;
+}
+
+body.light-theme .tech-tag {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
