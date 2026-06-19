@@ -730,7 +730,7 @@ body {
     height: 14px;
 }
 
-.card-tweet-btn {
+.card-tweet-btn, .card-copy-btn {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -742,8 +742,12 @@ body {
     transition: var(--transition-fast);
 }
 
-.card-tweet-btn:hover {
+.card-tweet-btn:hover, .card-copy-btn:hover {
     color: #ffffff;
+}
+
+.card-copy-btn.copied {
+    color: var(--color-feature);
 }
 
 /* X Tweet Composer Panel Styling */

@@ -1,6 +1,7 @@
 // Global Application State
 let appState = {
     updates: [],
+    filteredUpdates: [],
     selectedIds: new Set(),
     activeFilter: 'all',
     searchQuery: '',
@@ -11,6 +12,7 @@ let appState = {
 // DOM Elements
 const refreshBtn = document.getElementById('refresh-btn');
 const refreshIcon = document.getElementById('refresh-icon');
+const exportBtn = document.getElementById('export-btn');
 const searchInput = document.getElementById('search-input');
 const updatesContainer = document.getElementById('updates-container');
 const lastSyncTimeEl = document.getElementById('last-sync-time');
@@ -52,6 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupEventListeners() {
     refreshBtn.addEventListener('click', () => fetchReleaseNotes(true));
     retryBtn.addEventListener('click', () => fetchReleaseNotes(true));
+    if (exportBtn) {
+        exportBtn.addEventListener('click', handleExportCSV);
+    }
     
     // Search implementation with basic debounce
     let searchTimeout;
@@ -194,6 +199,8 @@ function renderTimeline() {
         return true;
     });
 
+    appState.filteredUpdates = filteredUpdates;
+
     if (filteredUpdates.length === 0) {
         emptyView.classList.remove('hidden');
         feedView.classList.add('hidden');
@@ -261,6 +268,13 @@ function renderTimeline() {
                         </svg>
                         <span>Tweet</span>
                     </button>
+                    <button class="card-copy-btn" data-id="${item.id}" title="Copy update text to clipboard">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span>Copy</span>
+                    </button>
                     <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="card-link" title="Open official release notes page">
                         <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -274,7 +288,7 @@ function renderTimeline() {
             
             // Card selection logic via clicking card body (but avoid clicks on links/inputs)
             cardEl.addEventListener('click', (e) => {
-                if (e.target.closest('a') || e.target.closest('.checkbox-container') || e.target.closest('.card-tweet-btn')) {
+                if (e.target.closest('a') || e.target.closest('.checkbox-container') || e.target.closest('.card-tweet-btn') || e.target.closest('.card-copy-btn')) {
                     return;
                 }
                 toggleItemSelection(item.id);
@@ -295,6 +309,23 @@ function renderTimeline() {
                 syncCardSelectionsInUI();
                 autoCompileTweetText();
                 showComposer();
+            });
+
+            // Card specific Copy to Clipboard action button
+            const cardCopyBtn = cardEl.querySelector('.card-copy-btn');
+            cardCopyBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(item.text_content).then(() => {
+                    cardCopyBtn.classList.add('copied');
+                    const btnSpan = cardCopyBtn.querySelector('span');
+                    btnSpan.textContent = 'Copied!';
+                    setTimeout(() => {
+                        cardCopyBtn.classList.remove('copied');
+                        btnSpan.textContent = 'Copy';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Clipboard copy failed:', err);
+                });
             });
             
             itemsContainer.appendChild(cardEl);
@@ -483,4 +514,53 @@ function handleTweetPosting() {
     
     const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
     window.open(intentUrl, '_blank', 'noopener,noreferrer');
+}
+
+// Export current view of updates to CSV
+function handleExportCSV() {
+    const dataToExport = appState.filteredUpdates && appState.filteredUpdates.length > 0
+        ? appState.filteredUpdates
+        : appState.updates;
+        
+    if (dataToExport.length === 0) {
+        alert("No release notes available to export.");
+        return;
+    }
+    
+    // Create CSV header
+    const headers = ["Date", "Type", "Text Content", "Link"];
+    const rows = [headers];
+    
+    dataToExport.forEach(item => {
+        const escapeCSVValue = (val) => {
+            if (val === null || val === undefined) return '';
+            let formatted = String(val).replace(/"/g, '""');
+            if (formatted.includes(',') || formatted.includes('\n') || formatted.includes('"')) {
+                formatted = `"${formatted}"`;
+            }
+            return formatted;
+        };
+        
+        rows.push([
+            escapeCSVValue(item.date),
+            escapeCSVValue(item.type),
+            escapeCSVValue(item.text_content),
+            escapeCSVValue(item.link)
+        ]);
+    });
+    
+    const csvContent = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    const filterName = appState.activeFilter !== 'all' ? `_${appState.activeFilter}` : '';
+    const filename = `bq_release_notes${filterName}_${new Date().toISOString().slice(0, 10)}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
